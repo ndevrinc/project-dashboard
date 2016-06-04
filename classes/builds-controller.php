@@ -1,6 +1,6 @@
 <?php
 
-namespace Client_Portal;
+namespace Project_Dashboard;
 
 use WP_REST_Server;
 use WP_REST_Controller;
@@ -12,14 +12,14 @@ class Builds_Controller extends WP_REST_Controller {
 	protected $id_project = 0;
 
 	public function __construct() {
-		$this->namespace = 'clients/v1';
+		$this->namespace = 'projects/v1';
 		$this->rest_base = 'builds';
 	}
 
 	/**
 	 * Register the routes for the objects of the controller.
 	 *
-	 * /wp-json/clients/v1/builds/{build_id}
+	 * /wp-json/projects/v1/builds/{build_id}
 	 */
 	public function register_routes() {
 		register_rest_route( $this->namespace, '/' . $this->rest_base, array(
@@ -112,7 +112,7 @@ class Builds_Controller extends WP_REST_Controller {
 		$items = $this->prepare_item_for_database( $params );
 
 		if ( count( $items ) > 0 ) {
-			$save_results = $wpdb->insert( $wpdb->prefix . "clients_builds", $items );
+			$save_results = $wpdb->insert( $wpdb->prefix . "pd_builds", $items );
 		}
 
 		$data = array( 'messages' => $save_results );
@@ -120,7 +120,7 @@ class Builds_Controller extends WP_REST_Controller {
 			return new WP_REST_Response( $data, 200 );
 		}
 
-		return new WP_Error( 'cant-update', __( 'save did not work', 'ndevr-clients' ), array(
+		return new WP_Error( 'cant-update', __( 'save did not work', 'project-dashboard' ), array(
 			'status' => 500
 		) );
 
