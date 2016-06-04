@@ -2,7 +2,7 @@
 /*
  *   Singleton classes
  */
-namespace Client_Portal;
+namespace Project_Dashboard;
 
 class Install {
 	/*--------------------------------------------*
@@ -32,7 +32,7 @@ class Install {
 	} // end get_instance;
 
 	private function __construct() {
-		register_activation_hook( 'client-portal/plugin.php', array( $this, 'client_builds_install' ) );
+		register_activation_hook( 'project-dashboard/plugin.php', array( $this, 'project_dashboard_builds_install' ) );
 	}
 
 	public function dependent_plugin() {
@@ -42,10 +42,10 @@ class Install {
 		) {
 			add_action( 'admin_notices', array( $this, 'dependent_plugin_notice' ) );
 
-			deactivate_plugins( plugin_basename( 'client-portal/plugin.php' ) );
+			deactivate_plugins( plugin_basename( 'project-dashboard/plugin.php' ) );
 			echo 'Sorry, but this plugin requires the WP REST API (v2) and Fieldmanager plugins 
 				to be installed and active.';
-			@trigger_error(__('Please enable required plugins first', 'client-portal'), E_USER_ERROR);
+			@trigger_error(__('Please enable required plugins first', 'project-dashboard'), E_USER_ERROR);
 
 			if ( isset( $_GET['activate'] ) ) {
 				unset( $_GET['activate'] );
@@ -53,18 +53,13 @@ class Install {
 		}
 	}
 
-	public function dependent_plugin_notice() {
-		?>
-		<?php
-	}
-
-	public function client_builds_install() {
+	public function project_dashboard_builds_install() {
 		$this->dependent_plugin();
 		global $wpdb;
-		global $cp_db_version;
-		$cp_db_version = get_option( 'cp_db_version', 1 );
+		global $pd_builds_db_version;
+		$pd_builds_db_version = get_option( 'pd_builds_db_version', 1 );
 
-		$table_name = $wpdb->prefix . 'cp_builds';
+		$table_name = $wpdb->prefix . 'pd_builds';
 
 		$charset_collate = $wpdb->get_charset_collate();
 
@@ -89,6 +84,6 @@ class Install {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
 
-		add_option( 'cp_db_version', $cp_db_version );
+		add_option( 'pd_builds_db_version', $pd_builds_db_version );
 	}
 }

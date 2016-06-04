@@ -1,19 +1,19 @@
 <?php
 /**
- * Plugin Name:     Client Portal
- * Description:     Client portal pages for dashboard
+ * Plugin Name:     Project Dashboard
+ * Description:     Project pages for clients and team
  * Author:          Ndevr, Inc.
  * Author URI:      https://ndevr.io
- * Text Domain:     client-portal
+ * Text Domain:     project-dashboard
  * Domain Path:     /languages
  * Version:         0.1.0
  *
- * @package         Client_Portal
+ * @package         Project_Dashboard
  */
 
 require_once( __DIR__ . "/classes/install.php" );
 require_once( __DIR__ . "/classes/projects-define.php" );
 require_once( __DIR__ . "/classes/projects.php" );
 
-Client_Portal\Install::get_instance();
-Client_Portal\Projects_Define::get_instance();
+Project_Dashboard\Install::get_instance();
+Project_Dashboard\Projects_Define::get_instance();

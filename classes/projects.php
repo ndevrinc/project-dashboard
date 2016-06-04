@@ -2,7 +2,7 @@
 /*
  *   Singleton classes
  */
-namespace Client_Portal;
+namespace Project_Dashboard;
 
 class Projects {
 	/*--------------------------------------------*
@@ -37,13 +37,13 @@ class Projects {
 
 	public function get_by_key( $api_key ) {
 		$query_args = array(
-			'post_type'      => 'cp_project',
+			'post_type'      => 'pd_project',
 			'posts_per_page' => 1,
 			'post_status'    => 'publish',
 			'orderby'        => 'meta_value',
 			'meta_query'     => array(
 				array(
-					'key'     => 'custom_projects_api_key',
+					'key'     => 'pd_project_api_key',
 					'value'   => $api_key,
 					'compare' => '=',
 				),
