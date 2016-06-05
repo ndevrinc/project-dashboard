@@ -52,7 +52,7 @@ class Projects_Define {
 			$rewrite  = array( 'slug' => 'projects/project' );
 
 			$fm = new Fieldmanager_Group( array(
-				'name'           => 'custom_project',
+				'name'           => 'pd_project',
 				'serialize_data' => false,
 				'children'       => array(
 					'id_external'      => new \Fieldmanager_TextField( array(
