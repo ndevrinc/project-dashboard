@@ -19,7 +19,7 @@ class Settings_Page {
 	/**
 	 * Creates or returns an instance of this class.
 	 *
-	 * @return  Foo A single instance of this class.
+	 * @return A single instance of this class.
 	 */
 	public static function get_instance() {
 
@@ -35,28 +35,42 @@ class Settings_Page {
 	private function setup_actions() {
 		add_action( 'admin_menu', array( $this, 'get_page_hook' ) );
 
-		fm_register_submenu_page( 'project_dashboard_fields', 'project_dashboard',
-			esc_html__( 'Project Dashboard Settings', 'project-dashboard' ),
-			esc_html__( 'Settings', 'project-dashboard' ),
-			'manage_options'
-		);
-		add_action( 'fm_submenu_project_dashboard_fields', array(
-			$this,
-			'register_project_dashboard_fields_submenu_page'
-		) );
-		add_action( 'settings_page_project_dashboard_fields', array(
-			$this,
-			'action_settings_page_project_dashboard_fields'
-		), 15 ); // after Fieldmanager fields context
-
 	}
 
 	// Adds the Settings sub menu
 	public function get_page_hook() {
-		add_menu_page( __( 'Project Dashboard', 'project-dashboard' ), __( 'Project Dashboard', 'project-dashboard' ),
-			'manage_options', 'project_dashboard' );
+		add_menu_page(
+			__( 'Project Dashboard', 'project-dashboard' ),
+			__( 'Project Dashboard', 'project-dashboard' ),
+			'manage_options',
+			'project_dashboard',
+			'',
+			'dashicons-chart-pie',
+			3
+		);
+		add_submenu_page(
+			'project_dashboard',
+			__( 'Settings', 'project-dashboard' ),
+			__( 'Settings', 'project-dashboard' ),
+			'manage_options',
+			'pd_settings',
+			array( $this, 'project_dashboard_page_callback' )
+		);
 	}
 
+	/**
+	 *
+	 */
+	public function project_dashboard_page_callback() { ?>
+		<h1><?php esc_html_e( 'Project Dashboard Settings', 'project-dashboard' );?></h1>
+		<div>TO Come......</div>
+
+	<?php
+	}
+
+	/**
+	 * @return array
+	 */
 	public function get_defaults() {
 		return array(
 			'builds' => array(
@@ -75,7 +89,7 @@ class Settings_Page {
 			'name'     => 'project_dashboard_fields',
 			'sortable' => false,
 			'children' => array(
-				'builds' => new \Fieldmanager_Group( esc_html__( 'Builds', 'fusion' ), array(
+				'builds' => new \Fieldmanager_Group( esc_html__( 'Builds', 'project-dashboard' ), array(
 					'name'           => 'builds',
 					'sortable'       => false,
 					'limit'          => 1,
@@ -96,12 +110,6 @@ class Settings_Page {
 		return $ctas_fields;
 	}
 
-	/**
-	 * Register cta fields for a global submenu page
-	 */
-	public function register_project_dashboard_fields_submenu_page() {
-		$ctas_fields = $this->register_project_dashboard_fields();
-		$ctas_fields->activate_submenu_page();
-	}
+
 
 }

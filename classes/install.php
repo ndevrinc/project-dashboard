@@ -19,7 +19,7 @@ class Install {
 	/**
 	 * Creates or returns an instance of this class.
 	 *
-	 * @return  Foo A single instance of this class.
+	 * @return  A single instance of this class.
 	 */
 	public static function get_instance() {
 

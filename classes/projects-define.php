@@ -122,7 +122,7 @@ class Projects_Define {
 				'has_archive'           => true,
 				'rewrite'               => $rewrite,
 				'show_ui'               => true,
-				'show_in_menu'          => true,
+				'show_in_menu'          => 'project_dashboard',
 				'show_in_admin_bar'     => true,
 				'field_manager'         => $fm,
 			);

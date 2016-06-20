@@ -11,13 +11,14 @@
  * @package         Project_Dashboard
  */
 
-require_once( __DIR__ . "/classes/install.php" );
+//require_once( __DIR__ . "/classes/install.php" );
 require_once( __DIR__ . "/classes/settings-page.php" );
 require_once( __DIR__ . "/classes/projects-define.php" );
 require_once( __DIR__ . "/classes/projects.php" );
 require_once( __DIR__ . "/classes/builds-define.php" );
+//require_once( __DIR__ . "/classes/uninstall.php" );
 
-Project_Dashboard\Install::get_instance();
+//Project_Dashboard\Install::get_instance();
 $project_dashboard_settings = Project_Dashboard\Settings_Page::get_instance();
 Project_Dashboard\Projects_Define::get_instance();
 
