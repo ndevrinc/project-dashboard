@@ -45,7 +45,7 @@ class Settings_Page {
 			'manage_options',
 			'project_dashboard',
 			'',
-			'dashicons-chart-pie',
+			'dashicons-analytics',
 			3
 		);
 		add_submenu_page(

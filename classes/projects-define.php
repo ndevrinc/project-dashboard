@@ -55,10 +55,6 @@ class Projects_Define {
 				'name'           => 'pd_project',
 				'serialize_data' => false,
 				'children'       => array(
-					'id_external'      => new \Fieldmanager_TextField( array(
-						'label'          => __( 'External ID', 'project-dashboard' ),
-						'serialize_data' => false,
-					) ),
 					'api_key'      => new \Fieldmanager_TextField( array(
 						'label'          => __( 'API Key', 'project-dashboard' ),
 						'serialize_data' => false,

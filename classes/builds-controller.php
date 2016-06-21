@@ -207,7 +207,10 @@ class Builds_Controller extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function get_items_permissions_check( $request ) {
-		return true; //readable by all for now //current_user_can( 'edit_posts' );
+		//current_user_can( 'edit_posts' );
+		//TODO verify the api key
+		return true; //readable by all for now
+
 	}
 
 	/**

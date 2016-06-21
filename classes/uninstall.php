@@ -10,6 +10,5 @@ status_header( 404 );
 exit;
 }
 
-//TODO
-// Delete all compact options
+// Delete all PD options
 delete_option( 'project_dashboard_fields' );
