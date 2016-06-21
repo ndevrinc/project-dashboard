@@ -23,7 +23,7 @@ class Projects_Define {
 	/**
 	 * Creates or returns an instance of this class.
 	 *
-	 * @return  Foo A single instance of this class.
+	 * @return  A single instance of this class.
 	 */
 	public static function get_instance() {
 
@@ -98,7 +98,7 @@ class Projects_Define {
 				'new_item'           => __( 'New ' . $singular, 'project-dashboard' ),
 				'edit_item'          => __( 'Edit Your ' . $singular, 'project-dashboard' ),
 				'view_item'          => __( 'View ' . $singular, 'project-dashboard' ),
-				'all_items'          => __( 'All ' . $plural, 'project-dashboard' ),
+				'all_items'          => __( '' . $plural, 'project-dashboard' ),
 				'search_items'       => __( 'Search ' . $plural, 'project-dashboard' ),
 				'parent_item_colon'  => __( 'Parent ' . $plural . ':', 'project-dashboard' ),
 				'not_found'          => __( 'No ' . strtolower( $plural ) . ' found.', 'project-dashboard' ),
@@ -110,7 +110,7 @@ class Projects_Define {
 			$args   = array(
 				'labels'                => $labels,
 				'public'                => false,
-				'menu_position'         => 1,
+				'menu_position'         => 10,
 				'supports'              => array(
 					'title',
 					'editor',
@@ -122,7 +122,7 @@ class Projects_Define {
 				'has_archive'           => true,
 				'rewrite'               => $rewrite,
 				'show_ui'               => true,
-				'show_in_menu'          => true,
+				'show_in_menu'          => 'project_dashboard',
 				'show_in_admin_bar'     => true,
 				'field_manager'         => $fm,
 			);
