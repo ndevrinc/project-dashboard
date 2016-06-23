@@ -32,7 +32,7 @@ class Install {
 	} // end get_instance;
 
 	private function __construct() {
-		register_activation_hook( 'project-dashboard/plugin.php', array( $this, 'project_dashboard_builds_install' ) );
+		register_activation_hook( 'project-dashboard/plugin.php', array( $this, 'dependent_plugin' ) );
 	}
 
 	public function dependent_plugin() {
@@ -53,37 +53,4 @@ class Install {
 		}
 	}
 
-	public function project_dashboard_builds_install() {
-		$this->dependent_plugin();
-		global $wpdb;
-		global $pd_builds_db_version;
-		$pd_builds_db_version = get_option( 'pd_builds_db_version', 1 );
-
-		$table_name = $wpdb->prefix . 'pd_builds';
-
-		$charset_collate = $wpdb->get_charset_collate();
-
-		$sql = "CREATE TABLE $table_name (
-		id mediumint(9) NOT NULL AUTO_INCREMENT,
-		id_project mediumint(9) NOT NULL,
-		ci_name tinytext NOT NULL,
-		ci_message varchar(255),
-		committer_username tinytext,
-		environment tinytext NOT NULL,
-		time datetime DEFAULT '0000-00-00 00:00:00',
-		status tinytext,
-		build_time int DEFAULT 0,
-		frontend_time int DEFAULT 0,
-		backend_time int DEFAULT 0,
-		browserstack_job_id varchar(1024) DEFAULT '',
-		build_url varchar(1024) DEFAULT '',
-		pullrequest_url varchar(1024) DEFAULT '',
-		UNIQUE KEY id (id)
-	) $charset_collate;";
-
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-		dbDelta( $sql );
-
-		add_option( 'pd_builds_db_version', $pd_builds_db_version );
-	}
 }

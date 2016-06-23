@@ -14,7 +14,8 @@ class Projects_Define {
 	 *--------------------------------------------*/
 
 	/** Refers to a single instance of this class. */
-	private static $instance = NULL;
+	private static $instance = null;
+	public static $rest_base = 'projects';
 
 	/*--------------------------------------------*
 	 * Constructor
@@ -27,7 +28,7 @@ class Projects_Define {
 	 */
 	public static function get_instance() {
 
-		if ( NULL == self::$instance ) {
+		if ( null == self::$instance ) {
 			self::$instance = new self;
 		}
 
@@ -55,7 +56,7 @@ class Projects_Define {
 				'name'           => 'pd_project',
 				'serialize_data' => false,
 				'children'       => array(
-					'api_key'      => new \Fieldmanager_TextField( array(
+					'api_key'          => new \Fieldmanager_TextField( array(
 						'label'          => __( 'API Key', 'project-dashboard' ),
 						'serialize_data' => false,
 					) ),
@@ -78,6 +79,13 @@ class Projects_Define {
 						'add_more_label' => __( 'Add Project Members', 'project-dashboard' ),
 						'limit'          => 0,
 						'label'          => __( 'Project Members', 'project-dashboard' ),
+						'datasource'     => new \Fieldmanager_Datasource_User,
+						'serialize_data' => false,
+					) ),
+					'project_poc'      => new \Fieldmanager_Autocomplete( array(
+						'add_more_label' => __( 'Add Client Point of Contact', 'project-dashboard' ),
+						'limit'          => 0,
+						'label'          => __( 'Client Point of Contact', 'project-dashboard' ),
 						'datasource'     => new \Fieldmanager_Datasource_User,
 						'serialize_data' => false,
 					) ),
@@ -120,6 +128,8 @@ class Projects_Define {
 				'show_ui'               => true,
 				'show_in_menu'          => 'project_dashboard',
 				'show_in_admin_bar'     => true,
+//				'rest_base'             => self::$rest_base,
+//				'rest_controller_class' => 'Project_Dashboard\Projects_Controller',
 				'field_manager'         => $fm,
 			);
 

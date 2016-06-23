@@ -13,7 +13,7 @@ class Projects_Controller extends WP_REST_Controller {
 
 	public function __construct() {
 		$this->namespace = 'projects/v1';
-		$this->rest_base = 'projects';
+		$this->rest_base = Projects_Define::$rest_base;
 	}
 
 	/**
@@ -113,18 +113,18 @@ class Projects_Controller extends WP_REST_Controller {
 		if ( ! empty( $params ) ) {
 			$project = get_post( $params['project'] );
 			$return  = array(
-				'post_type'  => 'pd_build',
-				'post_title' => $project->post_title . ' - ' . $params['ci_name'] . ' - ' . $params['environment'] . ' build',
-				'project'    => $params['project'],
-				'meta'       => array(
-					'status'      => $params['status'],
-					'ci_name'     => $params['ci_name'],
-					'ci_message'  => $params['ci_message'],
-					'username'    => $params['username'],
-					'environment' => $params['environment'],
-					'time'        => $params['time'],
-					'pr_url'      => $params['pr_url'],
-				),
+				'post_type'  => 'pd_project',
+				'post_title' => $project->post_title,
+//				'project'    => $params['project'],
+//				'meta'       => array(
+//					'status'      => $params['status'],
+//					'ci_name'     => $params['ci_name'],
+//					'ci_message'  => $params['ci_message'],
+//					'username'    => $params['username'],
+//					'environment' => $params['environment'],
+//					'time'        => $params['time'],
+//					'pr_url'      => $params['pr_url'],
+//				),
 			);
 		}
 
