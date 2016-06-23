@@ -128,14 +128,29 @@ class Projects_Define {
 				'show_ui'               => true,
 				'show_in_menu'          => 'project_dashboard',
 				'show_in_admin_bar'     => true,
-//				'rest_base'             => self::$rest_base,
-//				'rest_controller_class' => 'Project_Dashboard\Projects_Controller',
 				'field_manager'         => $fm,
 			);
 
 			\register_post_type( $slug, $args );
 
 			$fm->add_meta_box( __( 'Other Information', 'project-dashboard' ), $slug );
+
+			$project_dashboard_settings = \Project_Dashboard\Settings_Page::get_instance();
+			$project_dashboard_fields = maybe_unserialize( get_option( 'project_dashboard_fields', $project_dashboard_settings->get_defaults() ) );
+			if( $project_dashboard_fields['harvest']['enabled'] ){
+
+				$fm_harvest = new Fieldmanager_Group( array(
+					'name'           => 'pd_harvest',
+					'serialize_data' => false,
+					'children'       => array(
+						'h_project_id'          => new \Fieldmanager_TextField( array(
+							'label'          => __( 'Harvest Project ID', 'project-dashboard' ),
+							'serialize_data' => false,
+						) ),
+					)
+				) );
+				$fm_harvest->add_meta_box( __( 'Harvest Information', 'project-dashboard' ), $slug );
+			}
 
 		}
 	}
