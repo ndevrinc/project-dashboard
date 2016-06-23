@@ -35,9 +35,20 @@ class Settings_Page {
 	private function setup_actions() {
 		add_action( 'admin_menu', array( $this, 'get_page_hook' ) );
 		add_action( 'admin_init', array( $this, 'display_settings_fields' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 	}
 
-// Adds the Settings sub menu
+	public function admin_scripts( $hook ){
+		if ( 'project-dashboard_page_pd_settings' != $hook ) {
+			return;
+		}
+
+		//TODO Need gulp task to minify this
+		wp_enqueue_script( 'pd_admin', plugin_dir_url( __FILE__ ) . '../assets/admin.js', array( 'jquery' ), '1.0.0' );
+		wp_enqueue_script( 'pd_admin' );
+	}
+
+	// Adds the Settings sub menu
 	public function get_page_hook() {
 		add_menu_page(
 			__( 'Project Dashboard', 'project-dashboard' ),
@@ -168,21 +179,21 @@ class Settings_Page {
 		</select><br/>
 		<label class="description"
 		       for="project_dashboard_fields[harvest][enabled]"><?php _e( 'Toggles whether or not to enable Harvest Integration.', 'project-dashboard' ); ?></label>
-		<p>
+		<div class="harvest-client">
 		<h2><label
 				for="project_dashboard_fields[harvest][client][ID]"><?php _e( 'API Client ID', 'project-dashboard' ); ?></label>
 		</h2>
 		<input class="regular-text" name="project_dashboard_fields[harvest][client][ID]" id="pd-harvest-client-id"
 		       value="<?php esc_attr_e( $project_dashboard_fields['harvest']['client']['ID'] ); ?>"/>
-		</p>
-		<p>
+		</div>
+		<div class="harvest-client">
 		<h2><label
 				for="project_dashboard_fields[harvest][client][secret]"><?php _e( 'API Client Secret', 'project-dashboard' ); ?></label>
 		</h2>
 		<input class="regular-text" name="project_dashboard_fields[harvest][client][secret]"
 		       id="pd-harvest-client-secret"
 		       value="<?php esc_attr_e( $project_dashboard_fields['harvest']['client']['secret'] ); ?>"/>
-		</p>
+		</div>
 		<?php
 	}
 
