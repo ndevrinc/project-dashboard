@@ -7,19 +7,19 @@ use WP_REST_Controller;
 use WP_REST_Response;
 use WP_Error;
 
-class Builds_Controller extends WP_REST_Controller {
+class Projects_Controller extends WP_REST_Controller {
 
 	protected $project = 0;
 
 	public function __construct() {
 		$this->namespace = 'projects/v1';
-		$this->rest_base = 'builds';
+		$this->rest_base = 'projects';
 	}
 
 	/**
 	 * Register the routes for the objects of the controller.
 	 *
-	 * /wp-json/projects/v1/builds/{build_id}
+	 * /wp-json/projects/v1/projects/{project_id}
 	 */
 	public function register_routes() {
 		register_rest_route( $this->namespace, '/' . $this->rest_base, array(
@@ -208,7 +208,7 @@ class Builds_Controller extends WP_REST_Controller {
 	 */
 	public function get_items_permissions_check( $request ) {
 		//TODO verify the api key
-		return current_user_can( 'edit_posts' ); 
+		return current_user_can( 'edit_posts' );
 
 	}
 
