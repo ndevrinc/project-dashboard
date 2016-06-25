@@ -35,9 +35,20 @@ class Settings_Page {
 	private function setup_actions() {
 		add_action( 'admin_menu', array( $this, 'get_page_hook' ) );
 		add_action( 'admin_init', array( $this, 'display_settings_fields' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 	}
 
-// Adds the Settings sub menu
+	public function admin_scripts( $hook ){
+		if ( 'project-dashboard_page_pd_settings' != $hook ) {
+			return;
+		}
+
+		//TODO Need gulp task to minify this
+		wp_enqueue_script( 'pd_admin', plugin_dir_url( __FILE__ ) . '../assets/admin.js', array( 'jquery' ), '1.0.0' );
+		wp_enqueue_script( 'pd_admin' );
+	}
+
+	// Adds the Settings sub menu
 	public function get_page_hook() {
 		add_menu_page(
 			__( 'Project Dashboard', 'project-dashboard' ),
@@ -45,7 +56,7 @@ class Settings_Page {
 			'manage_options',
 			'project_dashboard',
 			'',
-			'dashicons-chart-pie',
+			'dashicons-analytics',
 			3
 		);
 		add_submenu_page(
@@ -114,12 +125,17 @@ class Settings_Page {
 	 * @return void
 	 */
 	function display_settings_fields() {
-		add_settings_section( 'pd_section', esc_html__( 'Build Settings', 'project-dashboard' ), null, 'project_dashboard' );
+		add_settings_section( 'pd_section', esc_html__( 'Settings', 'project-dashboard' ), null, 'project_dashboard' );
 
-		add_settings_field( 'project_dashboard_fields', esc_html__( 'Builds', 'project-dashboard' ), array(
+		add_settings_field( 'builds', esc_html__( 'Builds', 'project-dashboard' ), array(
 			$this,
 			'builds_form'
-		), 'project_dashboard', 'pd_section' );
+		), 'project_dashboard', 'pd_section', array( 'fields' => maybe_unserialize( get_option( 'project_dashboard_fields', $this->get_defaults() ) ) ) );
+
+		add_settings_field( 'harvest', esc_html__( 'Harvest', 'project-dashboard' ), array(
+			$this,
+			'harvest_form'
+		), 'project_dashboard', 'pd_section', array( 'fields' => maybe_unserialize( get_option( 'project_dashboard_fields', $this->get_defaults() ) ) ) );
 
 		register_setting( 'pd_section', 'project_dashboard_fields', array( $this, 'sanitize_fields' ) );
 	}
@@ -127,16 +143,19 @@ class Settings_Page {
 	public function sanitize_fields() {
 		if ( isset( $_REQUEST['project_dashboard_fields'] ) ) {
 			$_REQUEST['project_dashboard_fields']['builds']['enabled'] = ( $_REQUEST['project_dashboard_fields']['builds']['enabled'] == '1' );
+
+			$_REQUEST['project_dashboard_fields']['harvest']['enabled'] = ( $_REQUEST['project_dashboard_fields']['harvest']['enabled'] == '1' );
+
 			return maybe_serialize( $_REQUEST['project_dashboard_fields'] );
 		}
 	}
 
 	/**
-	 *
+	 * Form for Build settings
 	 */
-	public function builds_form() {
-		$project_dashboard_fields = maybe_unserialize( get_option( 'project_dashboard_fields', $this->get_defaults() ) );
-		 ?>
+	public function builds_form( $params ) {
+		$project_dashboard_fields = $params['fields'];
+		?>
 		<select name="project_dashboard_fields[builds][enabled]" id="pd-builds">
 			<?php $selected = $project_dashboard_fields['builds']['enabled']; ?>
 			<option value="1" <?php selected( $selected, true ); ?> >Enabled</option>
@@ -148,12 +167,50 @@ class Settings_Page {
 	}
 
 	/**
+	 * Form for Harvest settings
+	 */
+	public function harvest_form( $params ) {
+		$project_dashboard_fields = $params['fields'];
+		?>
+		<select name="project_dashboard_fields[harvest][enabled]" id="pd-harvest">
+			<?php $selected = $project_dashboard_fields['harvest']['enabled']; ?>
+			<option value="1" <?php selected( $selected, true ); ?> >Enabled</option>
+			<option value="0" <?php selected( $selected, false ); ?> >Disabled</option>
+		</select><br/>
+		<label class="description"
+		       for="project_dashboard_fields[harvest][enabled]"><?php _e( 'Toggles whether or not to enable Harvest Integration.', 'project-dashboard' ); ?></label>
+		<div class="harvest-client">
+		<h2><label
+				for="project_dashboard_fields[harvest][client][ID]"><?php _e( 'API Client ID', 'project-dashboard' ); ?></label>
+		</h2>
+		<input class="regular-text" name="project_dashboard_fields[harvest][client][ID]" id="pd-harvest-client-id"
+		       value="<?php esc_attr_e( $project_dashboard_fields['harvest']['client']['ID'] ); ?>"/>
+		</div>
+		<div class="harvest-client">
+		<h2><label
+				for="project_dashboard_fields[harvest][client][secret]"><?php _e( 'API Client Secret', 'project-dashboard' ); ?></label>
+		</h2>
+		<input class="regular-text" name="project_dashboard_fields[harvest][client][secret]"
+		       id="pd-harvest-client-secret"
+		       value="<?php esc_attr_e( $project_dashboard_fields['harvest']['client']['secret'] ); ?>"/>
+		</div>
+		<?php
+	}
+
+	/**
 	 * @return array
 	 */
 	public function get_defaults() {
 		return array(
-			'builds' => array(
+			'builds'  => array(
 				'enabled' => true,
+			),
+			'harvest' => array(
+				'enabled' => true,
+				'client'  => array(
+					'ID'     => '',
+					'secret' => ''
+				),
 			)
 		);
 	}
