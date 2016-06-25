@@ -29,12 +29,12 @@ class Projects_Controller extends WP_REST_Controller {
 				'permission_callback' => array( $this, 'get_items_permissions_check' ),
 				'args'                => array(),
 			),
-			array(
-				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'update_item' ),
-				'permission_callback' => array( $this, 'update_item_permissions_check' ),
-				'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
-			),
+//			array(
+//				'methods'             => WP_REST_Server::EDITABLE,
+//				'callback'            => array( $this, 'update_item' ),
+//				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+//				'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
+//			),
 		) );
 		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\d]+)/(?P<user_id>[\d]+)', array(
 			array(
@@ -57,13 +57,17 @@ class Projects_Controller extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
-		$items = array(); //do a query, call another class, etc
+		$query = new \WP_Query( array( 'post_type' => 'pd_project' ) );
+		if( $query->have_posts() ){
+			$items = $query->posts;
+		}
 		$data  = array();
 		foreach ( $items as $item ) {
 			$itemdata = $this->prepare_item_for_response( $item, $request );
 			$data[]   = $this->prepare_response_for_collection( $itemdata );
 		}
-
+		wp_reset_postdata();
+		
 		return new WP_REST_Response( $data, 200 );
 	}
 
@@ -141,7 +145,19 @@ class Projects_Controller extends WP_REST_Controller {
 	 */
 	public function prepare_item_for_response( $item, $request ) {
 
-		return $item;
+		$return = array();
+		$return[$item->ID] = (array) $item;
+
+		$meta = get_post_meta( $item->ID );
+		foreach( $meta as $key => $value ){
+			if ( '_edit_lock' != $key && '_edit_last' != $key ) {
+				if ( preg_match( "/^pd_project_\w+/i", $key ) ) {
+					$return[$item->ID]['meta'][$key] = $value[0];
+				}
+			}
+		}
+
+		return $return;
 	}
 
 	/**
@@ -207,8 +223,8 @@ class Projects_Controller extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function get_items_permissions_check( $request ) {
-		//TODO verify the api key
-		return current_user_can( 'edit_posts' );
+		//TODO verify the api
+		return true; //current_user_can( 'edit_posts' );
 
 	}
 
