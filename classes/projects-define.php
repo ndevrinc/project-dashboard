@@ -60,7 +60,7 @@ class Projects_Define {
 						'label'          => __( 'API Key', 'project-dashboard' ),
 						'serialize_data' => false,
 						'attributes' => array( 'readonly' => true, 'disabled' => true    ),
-						'default_value' => wp_generate_password( 12 ),
+						'default_value' => wp_generate_password( 12, false ),
 						'sanitize' => array( $this, 'generate_if_empty' ),
 					) ),
 					'start_date'       => new \Fieldmanager_Datepicker( array(
@@ -76,21 +76,21 @@ class Projects_Define {
 						'limit'          => 0,
 						'label'          => __( 'Project Managers', 'project-dashboard' ),
 						'datasource'     => new \Fieldmanager_Datasource_User,
-						'serialize_data' => false,
+						'serialize_data' => true,
 					) ),
 					'project_members'  => new \Fieldmanager_Autocomplete( array(
 						'add_more_label' => __( 'Add Project Members', 'project-dashboard' ),
 						'limit'          => 0,
 						'label'          => __( 'Project Members', 'project-dashboard' ),
 						'datasource'     => new \Fieldmanager_Datasource_User,
-						'serialize_data' => false,
+						'serialize_data' => true,
 					) ),
 					'project_poc'      => new \Fieldmanager_Autocomplete( array(
 						'add_more_label' => __( 'Add Client Point of Contact', 'project-dashboard' ),
 						'limit'          => 0,
 						'label'          => __( 'Client Point of Contact', 'project-dashboard' ),
 						'datasource'     => new \Fieldmanager_Datasource_User,
-						'serialize_data' => false,
+						'serialize_data' => true,
 					) ),
 				)
 			) );
@@ -160,7 +160,7 @@ class Projects_Define {
 
 	public function generate_if_empty( $input ){
 		if( empty( $input ) ){
-			 $input = wp_generate_password( 12 );
+			 $input = wp_generate_password( 12, false );
 		}
 
 		return $input;

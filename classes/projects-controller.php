@@ -58,16 +58,16 @@ class Projects_Controller extends WP_REST_Controller {
 	 */
 	public function get_items( $request ) {
 		$query = new \WP_Query( array( 'post_type' => 'pd_project' ) );
-		if( $query->have_posts() ){
+		if ( $query->have_posts() ) {
 			$items = $query->posts;
 		}
-		$data  = array();
+		$data = array();
 		foreach ( $items as $item ) {
 			$itemdata = $this->prepare_item_for_response( $item, $request );
 			$data[]   = $this->prepare_response_for_collection( $itemdata );
 		}
 		wp_reset_postdata();
-		
+
 		return new WP_REST_Response( $data, 200 );
 	}
 
@@ -145,14 +145,27 @@ class Projects_Controller extends WP_REST_Controller {
 	 */
 	public function prepare_item_for_response( $item, $request ) {
 
-		$return = array();
-		$return[$item->ID] = (array) $item;
+		$return              = array();
+		$return[ $item->ID ] = (array) $item;
 
 		$meta = get_post_meta( $item->ID );
-		foreach( $meta as $key => $value ){
+		foreach ( $meta as $key => $value ) {
 			if ( '_edit_lock' != $key && '_edit_last' != $key ) {
-				if ( preg_match( "/^pd_project_\w+/i", $key ) ) {
-					$return[$item->ID]['meta'][$key] = $value[0];
+
+				if ( preg_match( "/^pd_project_\w+/i", $key ) || preg_match( "/^pd_harvest_\w+/i", $key ) ) {
+					if ( $key == 'pd_project_project_managers' ||
+					     $key == 'pd_project_project_members' ||
+					     $key == 'pd_project_project_poc'
+					) {
+						$queue = maybe_unserialize( $value[0] );
+						if ( ! empty( $queue ) ) {
+							$user_query = new \WP_User_Query( array( 'include' => $queue ) );
+							$return[ $item->ID ]['meta'][ $key ] = wp_list_pluck( $user_query->get_results(), 'display_name' );
+						}
+
+					} else {
+						$return[ $item->ID ]['meta'][ $key ] = maybe_unserialize( $value[0] );
+					}
 				}
 			}
 		}
