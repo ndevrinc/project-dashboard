@@ -59,6 +59,9 @@ class Projects_Define {
 					'api_key'          => new \Fieldmanager_TextField( array(
 						'label'          => __( 'API Key', 'project-dashboard' ),
 						'serialize_data' => false,
+						'attributes' => array( 'readonly' => true, 'disabled' => true    ),
+						'default_value' => wp_generate_password( 12 ),
+						'sanitize' => array( $this, 'generate_if_empty' ),
 					) ),
 					'start_date'       => new \Fieldmanager_Datepicker( array(
 						'label'          => __( 'Start Date', 'pmc-goldderby' ),
@@ -153,5 +156,13 @@ class Projects_Define {
 			}
 
 		}
+	}
+
+	public function generate_if_empty( $input ){
+		if( empty( $input ) ){
+			 $input = wp_generate_password( 12 );
+		}
+
+		return $input;
 	}
 }
