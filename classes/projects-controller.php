@@ -159,7 +159,7 @@ class Projects_Controller extends WP_REST_Controller {
 					) {
 						$queue = maybe_unserialize( $value[0] );
 						if ( ! empty( $queue ) ) {
-							$user_query = new \WP_User_Query( array( 'include' => $queue ) );
+							$user_query                          = new \WP_User_Query( array( 'include' => $queue ) );
 							$return[ $item->ID ]['meta'][ $key ] = wp_list_pluck( $user_query->get_results(), 'display_name' );
 						}
 
