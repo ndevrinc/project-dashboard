@@ -59,6 +59,9 @@ class Projects_Define {
 					'api_key'          => new \Fieldmanager_TextField( array(
 						'label'          => __( 'API Key', 'project-dashboard' ),
 						'serialize_data' => false,
+						'attributes'     => array( 'readonly' => true, 'disabled' => true ),
+						'default_value'  => wp_generate_password( 12, false ),
+						'sanitize'       => array( $this, 'generate_if_empty' ),
 					) ),
 					'start_date'       => new \Fieldmanager_Datepicker( array(
 						'label'          => __( 'Start Date', 'pmc-goldderby' ),
@@ -73,21 +76,21 @@ class Projects_Define {
 						'limit'          => 0,
 						'label'          => __( 'Project Managers', 'project-dashboard' ),
 						'datasource'     => new \Fieldmanager_Datasource_User,
-						'serialize_data' => false,
+						'serialize_data' => true,
 					) ),
 					'project_members'  => new \Fieldmanager_Autocomplete( array(
 						'add_more_label' => __( 'Add Project Members', 'project-dashboard' ),
 						'limit'          => 0,
 						'label'          => __( 'Project Members', 'project-dashboard' ),
 						'datasource'     => new \Fieldmanager_Datasource_User,
-						'serialize_data' => false,
+						'serialize_data' => true,
 					) ),
 					'project_poc'      => new \Fieldmanager_Autocomplete( array(
 						'add_more_label' => __( 'Add Client Point of Contact', 'project-dashboard' ),
 						'limit'          => 0,
 						'label'          => __( 'Client Point of Contact', 'project-dashboard' ),
 						'datasource'     => new \Fieldmanager_Datasource_User,
-						'serialize_data' => false,
+						'serialize_data' => true,
 					) ),
 				)
 			) );
@@ -112,23 +115,23 @@ class Projects_Define {
 				'edit_submit_label'  => __( 'Update Settings', 'project-dashboard' ),
 			);
 			$args   = array(
-				'labels'                => $labels,
-				'public'                => false,
-				'menu_position'         => 10,
-				'supports'              => array(
+				'labels'            => $labels,
+				'public'            => false,
+				'menu_position'     => 10,
+				'supports'          => array(
 					'title',
 					'editor',
 					'author',
 					'thumbnail',
 					'revisions'
 				),
-				'menu_icon'             => 'dashicons-groups',
-				'has_archive'           => true,
-				'rewrite'               => $rewrite,
-				'show_ui'               => true,
-				'show_in_menu'          => 'project_dashboard',
-				'show_in_admin_bar'     => true,
-				'field_manager'         => $fm,
+				'menu_icon'         => 'dashicons-groups',
+				'has_archive'       => true,
+				'rewrite'           => $rewrite,
+				'show_ui'           => true,
+				'show_in_menu'      => 'project_dashboard',
+				'show_in_admin_bar' => true,
+				'field_manager'     => $fm,
 			);
 
 			\register_post_type( $slug, $args );
@@ -136,14 +139,14 @@ class Projects_Define {
 			$fm->add_meta_box( __( 'Other Information', 'project-dashboard' ), $slug );
 
 			$project_dashboard_settings = \Project_Dashboard\Settings_Page::get_instance();
-			$project_dashboard_fields = maybe_unserialize( get_option( 'project_dashboard_fields', $project_dashboard_settings->get_defaults() ) );
-			if( $project_dashboard_fields['harvest']['enabled'] ){
+			$project_dashboard_fields   = maybe_unserialize( get_option( 'project_dashboard_fields', $project_dashboard_settings->get_defaults() ) );
+			if ( $project_dashboard_fields['harvest']['enabled'] ) {
 
 				$fm_harvest = new Fieldmanager_Group( array(
 					'name'           => 'pd_harvest',
 					'serialize_data' => false,
 					'children'       => array(
-						'h_project_id'          => new \Fieldmanager_TextField( array(
+						'h_project_id' => new \Fieldmanager_TextField( array(
 							'label'          => __( 'Harvest Project ID', 'project-dashboard' ),
 							'serialize_data' => false,
 						) ),
@@ -153,5 +156,13 @@ class Projects_Define {
 			}
 
 		}
+	}
+
+	public function generate_if_empty( $input ) {
+		if ( empty( $input ) ) {
+			$input = wp_generate_password( 12, false );
+		}
+
+		return $input;
 	}
 }
