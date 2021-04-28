@@ -37,13 +37,13 @@ class Projects {
 
 	public function get_by_key( $api_key ) {
 		$query_args = array(
-			'post_type'      => 'pd_project',
+			'post_type'      => 'pd-project',
 			'posts_per_page' => 1,
 			'post_status'    => 'publish',
 			'orderby'        => 'meta_value',
 			'meta_query'     => array(
 				array(
-					'key'     => 'pd_project_api_key',
+					'key'     => 'pd_api_key',
 					'value'   => $api_key,
 					'compare' => '=',
 				),

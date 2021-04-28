@@ -7,19 +7,19 @@ use WP_REST_Controller;
 use WP_REST_Response;
 use WP_Error;
 
-class Builds_Controller extends WP_REST_Controller {
+class Checks_Controller extends WP_REST_Controller {
 
 	protected $project = 0;
 
 	public function __construct() {
 		$this->namespace = 'pd/v1';
-		$this->rest_base = 'builds';
+		$this->rest_base = 'checks';
 	}
 
 	/**
 	 * Register the routes for the objects of the controller.
 	 *
-	 * /wp-json/pd/v1/builds/{build_id}
+	 * /wp-json/pd/v1/checks/{check_id}
 	 */
 	public function register_routes() {
 		register_rest_route( $this->namespace, '/' . $this->rest_base, array(
@@ -36,7 +36,7 @@ class Builds_Controller extends WP_REST_Controller {
 				'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
 			),
 		) );
-		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\d]+)/(?P<user_id>[\d]+)', array(
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\d]+)', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_item' ),
@@ -68,14 +68,13 @@ class Builds_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Update a single build.
+	 * Update a single check.
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function update_item( $request ) {
-		global $wpdb;
 		$params = $request->get_params();
 
 		$params['project'] = $this->project;
@@ -88,8 +87,11 @@ class Builds_Controller extends WP_REST_Controller {
 
 		$data = array( 'messages' => $save_results );
 		if ( false !== $save_results ) {
-			\update_post_meta( $save_results, 'pd_build_project', $items['project'] );
-			\update_post_meta( $save_results, 'pd_build_meta', $items['meta'] );
+			\update_post_meta( $save_results, 'pd_status', $items['status'] );
+			\update_post_meta( $save_results, 'pd_lighthouse', $items['lighthouse'] );
+			\update_post_meta( $save_results, 'pd_environment', $items['environment'] );
+			\update_post_meta( $save_results, 'pd_url', $items['url'] );
+			\update_post_meta( $save_results, 'pd_project', $items['project'] );
 
 			return new WP_REST_Response( $data, 200 );
 		}
@@ -113,18 +115,13 @@ class Builds_Controller extends WP_REST_Controller {
 		if ( ! empty( $params ) ) {
 			$project = get_post( $params['project'] );
 			$return  = array(
-				'post_type'  => 'pd-build',
-				'post_title' => $project->post_title . ' - ' . $params['ci_name'] . ' - ' . $params['environment'] . ' build',
-				'project'    => $params['project'],
-				'meta'       => array(
-					'status'      => $params['status'],
-					'ci_name'     => $params['ci_name'],
-					'ci_message'  => $params['ci_message'],
-					'username'    => $params['username'],
-					'environment' => $params['environment'],
-					'time'        => $params['time'],
-					'pr_url'      => $params['pr_url'],
-				),
+				'post_type'   => 'pd-check',
+				'post_title'  => $project->post_title . ' - ' . $params['environment'] . ' Check',
+				'status'      => isset( $params['status'] ) ? $params['status'] : 'notset',
+				'lighthouse'  => isset( $params['lighthouse'] ) ? $params['lighthouse'] : '{}',
+				'environment' => isset( $params['environment'] ) ? $params['environment'] : 'notset',
+				'url'         => isset( $params['url'] ) ? $params['url'] : 'notset',
+				'project'     => $params['project'],
 			);
 		}
 
@@ -181,9 +178,11 @@ class Builds_Controller extends WP_REST_Controller {
 	public function update_item_permissions_check( $request ) {
 		$params   = $request->get_params();
 		$projects = Projects::get_instance();
-		$results  = $projects->get_by_key( $params['api_key'] );
+		if ( array_key_exists( 'api_key', $params ) ) {
+			$results  = $projects->get_by_key( $params['api_key'] );
+		}
 
-		if ( array_key_exists( 'api_key', $params ) && $results->have_posts() ) {
+		if ( isset( $results ) && $results->have_posts() ) {
 			$project       = $results->post;
 			$this->project = $project->ID;
 
@@ -208,7 +207,7 @@ class Builds_Controller extends WP_REST_Controller {
 	 */
 	public function get_items_permissions_check( $request ) {
 		//TODO verify the api key
-		return current_user_can( 'edit_posts' ); 
+		return true;
 
 	}
 

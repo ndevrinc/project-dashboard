@@ -4,14 +4,13 @@
  */
 namespace Project_Dashboard;
 
-class Projects_Define {
+class Checks_Define {
 	/*--------------------------------------------*
 	 * Attributes
 	 *--------------------------------------------*/
 
 	/** Refers to a single instance of this class. */
-	private static $instance = null;
-	public static $rest_base = 'projects';
+	private static $instance = NULL;
 
 	/*--------------------------------------------*
 	 * Constructor
@@ -24,7 +23,7 @@ class Projects_Define {
 	 */
 	public static function get_instance() {
 
-		if ( null == self::$instance ) {
+		if ( NULL == self::$instance ) {
 			self::$instance = new self;
 		}
 
@@ -43,10 +42,10 @@ class Projects_Define {
 
 		if ( ! isset( self::$_instance ) ) {
 
-			$slug     = 'pd-project';
-			$singular = 'PD Project';
-			$plural   = 'PD Projects';
-			$rewrite  = array( 'slug' => 'pd-projects/project' );
+			$slug     = 'pd-check';
+			$singular = 'PD Check';
+			$plural   = 'PD Checks';
+			$rewrite  = array( 'slug' => 'pd-checks/check' );
 
 			$labels = array(
 				'name'               => _x( $plural, 'post type general name', 'project-dashboard' ),
@@ -72,30 +71,17 @@ class Projects_Define {
 				'public'            => false,
 				'menu_position'     => 10,
 				'supports'          => array(
-					'title',
-					'editor',
-					'author',
-					'thumbnail',
-					'revisions'
+					'title'
 				),
-				'menu_icon'         => 'dashicons-groups',
-				'has_archive'       => true,
+				'has_archive'       => false,
 				'rewrite'           => $rewrite,
 				'show_ui'           => true,
 				'show_in_menu'      => 'project_dashboard',
-				'show_in_admin_bar' => true,
+				'show_in_admin_bar' => false,
 			);
 
 			\register_post_type( $slug, $args );
 
 		}
 	}
-
-//	public function generate_if_empty( $input ) {
-//		if ( empty( $input ) ) {
-//			$input = wp_generate_password( 12, false );
-//		}
-//
-//		return $input;
-//	}
 }

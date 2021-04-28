@@ -15,12 +15,15 @@ require_once( __DIR__ . "/classes/install.php" );
 require_once( __DIR__ . "/classes/settings-page.php" );
 require_once( __DIR__ . "/classes/projects-define.php" );
 require_once( __DIR__ . "/classes/projects.php" );
+require_once( __DIR__ . "/classes/checks-define.php" );
 require_once( __DIR__ . "/classes/builds-define.php" );
 //require_once( __DIR__ . "/classes/uninstall.php" );
 
 Project_Dashboard\Install::get_instance();
 Project_Dashboard\Projects_Define::get_instance();
+Project_Dashboard\Checks_Define::get_instance();
 
+Project_Dashboard\Settings_Page::get_instance();
 
 add_action( 'rest_api_init', function() {
 	/**
@@ -33,6 +36,15 @@ add_action( 'rest_api_init', function() {
 	// Retrieve settings to determine what libraries / functionality is enabled
 	$project_dashboard_settings = Project_Dashboard\Settings_Page::get_instance();
 	$project_dashboard_fields = maybe_unserialize( get_option( 'project_dashboard_fields', $project_dashboard_settings->get_defaults() ) );
+
+	// Add Checks functionality only if enabled in settings
+	if ( $project_dashboard_fields['checks']['enabled'] ) {
+		Project_Dashboard\Checks_Define::get_instance();
+
+		require_once( __DIR__ . "/classes/checks-controller.php" );
+		$controller = new Project_Dashboard\Checks_Controller();
+		$controller->register_routes();
+	}
 
 	// Add Builds functionality only if enabled in settings
 	if ( $project_dashboard_fields['builds']['enabled'] ) {
