@@ -4,10 +4,6 @@
  */
 namespace Project_Dashboard;
 
-use Fieldmanager_Datepicker;
-use Fieldmanager_Group;
-use Fieldmanager_TextField;
-
 class Builds_Define {
 	/*--------------------------------------------*
 	 * Attributes
@@ -46,11 +42,11 @@ class Builds_Define {
 
 		if ( ! isset( self::$_instance ) ) {
 
-			$slug     = 'pd_build';
-			$singular = 'Build';
-			$plural   = 'Builds';
-			$rewrite  = array( 'slug' => 'builds/build' );
-
+			$slug     = 'pd-build';
+			$singular = 'PD Build';
+			$plural   = 'PD Builds';
+			$rewrite  = array( 'slug' => 'pd-builds/build' );
+/*
 			$fm = new Fieldmanager_Group( array(
 				'name'           => 'pd_build',
 				'serialize_data' => false,
@@ -88,7 +84,7 @@ class Builds_Define {
 					) ),
 				)
 			) );
-
+*/
 			$labels = array(
 				'name'               => _x( $plural, 'post type general name', 'project-dashboard' ),
 				'singular_name'      => _x( $singular, 'post type singular name', 'project-dashboard' ),
@@ -120,12 +116,9 @@ class Builds_Define {
 				'show_ui'           => true,
 				'show_in_menu'      => 'project_dashboard',
 				'show_in_admin_bar' => false,
-				'field_manager'     => $fm,
 			);
 
 			\register_post_type( $slug, $args );
-
-			$fm->add_meta_box( __( 'Other Information', 'project-dashboard' ), $slug );
 
 		}
 	}

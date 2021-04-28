@@ -37,13 +37,12 @@ class Install {
 
 	public function dependent_plugin() {
 		if ( \is_admin() && \current_user_can( 'activate_plugins' ) && (
-				! \is_plugin_active( 'rest-api/plugin.php' ) ||
-				! \is_plugin_active( 'fieldmanager/fieldmanager.php' ) )
+				! \is_plugin_active( 'advanced-custom-fields-pro/acf.php' ) )
 		) {
 			add_action( 'admin_notices', array( $this, 'dependent_plugin_notice' ) );
 
 			deactivate_plugins( plugin_basename( 'project-dashboard/plugin.php' ) );
-			echo 'Sorry, but this plugin requires the WP REST API (v2) and Fieldmanager plugins 
+			echo 'Sorry, but this plugin requires the ACF plugin 
 				to be installed and active.';
 			@trigger_error(__('Please enable required plugins first', 'project-dashboard'), E_USER_ERROR);
 

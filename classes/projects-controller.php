@@ -12,14 +12,14 @@ class Projects_Controller extends WP_REST_Controller {
 	protected $project = 0;
 
 	public function __construct() {
-		$this->namespace = 'projects/v1';
+		$this->namespace = 'pd/v1';
 		$this->rest_base = Projects_Define::$rest_base;
 	}
 
 	/**
 	 * Register the routes for the objects of the controller.
 	 *
-	 * /wp-json/projects/v1/projects/{project_id}
+	 * /wp-json/pd/v1/projects/{project_id}
 	 */
 	public function register_routes() {
 		register_rest_route( $this->namespace, '/' . $this->rest_base, array(
@@ -57,7 +57,7 @@ class Projects_Controller extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
-		$query = new \WP_Query( array( 'post_type' => 'pd_project' ) );
+		$query = new \WP_Query( array( 'post_type' => 'pd-project' ) );
 		if ( $query->have_posts() ) {
 			$items = $query->posts;
 		}
@@ -117,7 +117,7 @@ class Projects_Controller extends WP_REST_Controller {
 		if ( ! empty( $params ) ) {
 			$project = get_post( $params['project'] );
 			$return  = array(
-				'post_type'  => 'pd_project',
+				'post_type'  => 'pd-project',
 				'post_title' => $project->post_title,
 //				'project'    => $params['project'],
 //				'meta'       => array(

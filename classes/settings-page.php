@@ -127,6 +127,11 @@ class Settings_Page {
 	function display_settings_fields() {
 		add_settings_section( 'pd_section', esc_html__( 'Settings', 'project-dashboard' ), null, 'project_dashboard' );
 
+		add_settings_field( 'checks', esc_html__( 'Checks', 'project-dashboard' ), array(
+			$this,
+			'checks_form'
+		), 'project_dashboard', 'pd_section', array( 'fields' => maybe_unserialize( get_option( 'project_dashboard_fields', $this->get_defaults() ) ) ) );
+
 		add_settings_field( 'builds', esc_html__( 'Builds', 'project-dashboard' ), array(
 			$this,
 			'builds_form'
@@ -142,12 +147,30 @@ class Settings_Page {
 
 	public function sanitize_fields() {
 		if ( isset( $_REQUEST['project_dashboard_fields'] ) ) {
+			$_REQUEST['project_dashboard_fields']['checks']['enabled'] = ( $_REQUEST['project_dashboard_fields']['checks']['enabled'] == '1' );
+
 			$_REQUEST['project_dashboard_fields']['builds']['enabled'] = ( $_REQUEST['project_dashboard_fields']['builds']['enabled'] == '1' );
 
 			$_REQUEST['project_dashboard_fields']['harvest']['enabled'] = ( $_REQUEST['project_dashboard_fields']['harvest']['enabled'] == '1' );
 
 			return maybe_serialize( $_REQUEST['project_dashboard_fields'] );
 		}
+	}
+
+	/**
+	 * Form for Checks settings
+	 */
+	public function checks_form( $params ) {
+		$project_dashboard_fields = $params['fields'];
+		?>
+		<select name="project_dashboard_fields[checks][enabled]" id="pd-builds">
+			<?php $selected = $project_dashboard_fields['checks']['enabled']; ?>
+			<option value="1" <?php selected( $selected, true ); ?> >Enabled</option>
+			<option value="0" <?php selected( $selected, false ); ?> >Disabled</option>
+		</select><br/>
+		<label class="description"
+			   for="project_dashboard_fields[checks][enabled]"><?php _e( 'Toggles whether or not to enable checks.', 'project-dashboard' ); ?></label>
+		<?php
 	}
 
 	/**
@@ -162,7 +185,7 @@ class Settings_Page {
 			<option value="0" <?php selected( $selected, false ); ?> >Disabled</option>
 		</select><br/>
 		<label class="description"
-		       for="project_dashboard_fields[builds][enabled]"><?php _e( 'Toggles whether or not to enable builds.', 'project-dashboard' ); ?></label>
+			   for="project_dashboard_fields[builds][enabled]"><?php _e( 'Toggles whether or not to enable builds.', 'project-dashboard' ); ?></label>
 		<?php
 	}
 
@@ -202,6 +225,9 @@ class Settings_Page {
 	 */
 	public function get_defaults() {
 		return array(
+			'checks'  => array(
+				'enabled' => true,
+			),
 			'builds'  => array(
 				'enabled' => true,
 			),
